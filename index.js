@@ -2,11 +2,17 @@ var http = require('http'),
     httpProxy = require('http-proxy'),
     ready;
 
-var handler = function(req, res, proxy){
+var proxy = new httpProxy.RoutingProxy();
+
+var handler = function(req, res){
   var auth = req.headers.authorization;
-  var cluster_id = req.headers.x_cluster_id;
+  var cluster_id = req.headers['x-cluster-id'];
   if (auth && cluster_id){
     //check auth with the given cluster id
+    proxy.proxyRequest(req, res, {
+      host: 'localhost',
+      port: 10001
+    });
   } else {
     res.writeHead(401);
     res.end();
