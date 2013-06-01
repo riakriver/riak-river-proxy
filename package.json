@@ -24,5 +24,8 @@
   "gitHead": "f3291f1c68083c2fa1946389a66c62ee68bf357f",
   "bugs": {
     "url": "https://github.com/wlaurance/riak-river-proxy/issues"
+  },
+  "dependencies": {
+    "http-proxy": "~0.10.2"
   }
 }
