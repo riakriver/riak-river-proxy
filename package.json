@@ -1,0 +1,27 @@
+{
+  "name": "riak-river-proxy",
+  "version": "0.0.0",
+  "description": "Proxy point for clients. Handles authentication and load balancing to client riak clusters.",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wlaurance/riak-river-proxy.git"
+  },
+  "keywords": [
+    "proxy",
+    "for",
+    "riak",
+    "river",
+    "instances"
+  ],
+  "author": "Will S Laurance",
+  "license": "None",
+  "readmeFilename": "README.md",
+  "gitHead": "f3291f1c68083c2fa1946389a66c62ee68bf357f",
+  "bugs": {
+    "url": "https://github.com/wlaurance/riak-river-proxy/issues"
+  }
+}
