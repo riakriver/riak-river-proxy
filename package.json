@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Proxy point for clients. Handles authentication and load balancing to client riak clusters.",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "./node_modules/.bin/mocha"
   },
