@@ -5,6 +5,7 @@ var ready;
 
 function buildProxy() {
   var proxy = new httpProxy.RoutingProxy();
+  var key_prefix = require('./config').key_prefix;
 
   var redis_opts = {
     port: process.env.REDIS_PORT || 6379,
@@ -14,14 +15,32 @@ function buildProxy() {
   var client = redis.createClient(redis_opts.port, redis_opts.host);
   client.on('ready', startServer);
 
+  function checkForCluster(cluster_id, callback) {
+    client.get(key_prefix + cluster_id, function(err, reply) {
+      if (reply === null) {
+        return callback(new Error("Cluster " + cluster_id + " not found"));
+      } else {
+        return callback(null, reply);
+      }
+    });
+  }
+
   function handler(req, res){
     var auth = req.headers.authorization;
     var cluster_id = req.headers['x-cluster-id'];
     if (auth && cluster_id){
-      //check auth with the given cluster id
-      proxy.proxyRequest(req, res, {
-        host: 'localhost',
-        port: 10001
+      checkForCluster(cluster_id, function(err, options) {
+        if (err) {
+          res.writeHead(404);
+          return res.end();
+        } else {
+          if (auth === options.auth) {
+            return proxy.proxyRequest(req, res, options);
+          } else {
+            res.writeHead(401);
+            return res.end();
+          }
+        }
       });
     } else {
       res.writeHead(401);

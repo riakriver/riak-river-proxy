@@ -28,7 +28,7 @@ describe('Lookup proxy location', function() {
 
     async.each(headers, iterator, done);
   });
-  it('should not proxy a bad request with bad cluster id', function(done) {
+  it('should not proxy a bad request with bad cluster id - return 404', function(done) {
     function handler(e, r, b) {
       should.strictEqual(e, null);
       should.strictEqual(r.statusCode, 404);
