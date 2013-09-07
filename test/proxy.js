@@ -11,7 +11,7 @@ describe('Lookup proxy location', function() {
       port = rrp_port;
     })();
   });
-  it('should be a 401 for missing Authorization header with or without X-Cluster-Id', function(done) {
+  it('should not proxy if missing Authorization header with or without X-Cluster-Id - return 401', function(done) {
     var headers = [ {}, {"X-Cluster-Id": "Cluster12345"} ];
 
     function iterator(headers, callback) {
@@ -43,5 +43,6 @@ describe('Lookup proxy location', function() {
     };
     request(opts, handler);
   });
-  it('should proxy a good request');
+  it('should not proxy a good cluster with bad auth key - return 401');
+  it('should proxy a good request - pass on request');
 });
