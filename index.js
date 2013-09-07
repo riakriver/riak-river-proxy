@@ -1,10 +1,18 @@
-var http = require('http'),
-    httpProxy = require('http-proxy'),
-    ready;
-
+var http = require('http');
+var httpProxy = require('http-proxy');
+var redis = require('redis');
+var ready;
 var proxy = new httpProxy.RoutingProxy();
 
-var handler = function(req, res){
+var redis_opts = {
+  port: process.env.REDIS_PORT || 6379,
+  host: process.env.REDIS_HOST || '127.0.0.1'
+};
+
+var client = redis.createClient(redis_opts.port, redis_opts.host);
+client.on('ready', startServer);
+
+function handler(req, res){
   var auth = req.headers.authorization;
   var cluster_id = req.headers['x-cluster-id'];
   if (auth && cluster_id){
@@ -17,13 +25,18 @@ var handler = function(req, res){
     res.writeHead(401);
     res.end();
   }
-};
+}
 
 var port = process.env.RIAK_RIVER_PROXY_PORT || 8098;
 
-http.createServer(handler).listen(port, function(){
-  console.log('Riak River Proxy running on', port);
-  if (typeof ready === 'function') ready();
-});
+function startServer() {
+  http.createServer(handler).listen(port, function(){
+    if (process.env.NODE_ENV !== 'PRODUCTION') {
+      console.log('Riak River Proxy running on', port);
+      console.log('Riak River Proxy Redis running on', redis_opts);
+    }
+    if (typeof ready === 'function') ready();
+  });
+}
 
 module.exports = function(done) { ready = done; };

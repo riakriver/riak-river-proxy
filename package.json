@@ -26,7 +26,8 @@
     "url": "https://github.com/wlaurance/riak-river-proxy/issues"
   },
   "dependencies": {
-    "http-proxy": "~0.10.3"
+    "http-proxy": "~0.10.3",
+    "redis": "~0.8.4"
   },
   "devDependencies": {
     "mocha": "~1.12.1"
