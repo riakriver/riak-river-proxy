@@ -20,7 +20,7 @@ function buildProxy() {
       if (reply === null) {
         return callback(new Error("Cluster " + cluster_id + " not found"));
       } else {
-        return callback(null, reply);
+        return callback(null, JSON.parse(reply));
       }
     });
   }

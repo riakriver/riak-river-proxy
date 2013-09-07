@@ -43,6 +43,26 @@ describe('Lookup proxy location', function() {
     };
     request(opts, handler);
   });
-  it('should not proxy a good cluster with bad auth key - return 401');
+  it('should not proxy a good cluster with bad auth key - return 401', function(done){
+    var client = require('redis').createClient();
+    var key = require(__dirname + '/../config').key_prefix + 'test-cluster401';
+    client.set(key, JSON.stringify({
+      auth:'test-cluster401auth'
+    }), function() {
+      function handler(e, r, b) {
+        should.strictEqual(e, null);
+        should.strictEqual(r.statusCode, 401);
+        client.del(key, done);
+      }
+      var opts = {
+        url: host + ':' + port,
+        headers: {
+          Authorization: 'NOT THE PASSWORD',
+          "X-Cluster-Id": "test-cluster401"
+        }
+      };
+      request(opts, handler);
+    });
+  });
   it('should proxy a good request - pass on request');
 });
