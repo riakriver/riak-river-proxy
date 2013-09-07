@@ -97,4 +97,28 @@ describe('Lookup proxy location', function() {
       });
     });
   });
+
+  it('should handle a non responsive proxy endpoint - 500', function(done) {
+    var client = require('redis').createClient();
+    var key = require(__dirname + '/../config').key_prefix + 'test-cluster500';
+    client.set(key, JSON.stringify({
+      auth:'test-cluster500auth',
+      host:'127.0.0.1',
+      port: 90000
+    }), function() {
+      function handler(e, r, b) {
+        should.strictEqual(e, null);
+        should.strictEqual(r.statusCode, 500);
+        client.del(key, done);
+      }
+      var opts = {
+        url: host + ':' + port,
+        headers: {
+          Authorization: 'test-cluster500auth',
+          "X-Cluster-Id": "test-cluster500"
+        }
+      };
+      request(opts, handler);
+    });
+  });
 });
