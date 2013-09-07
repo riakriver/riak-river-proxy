@@ -8,7 +8,7 @@ describe('configuration options', function() {
       args.port = port;
       args.redis_opts = redis_opts;
       done();
-    });
+    })();
   });
   it('should start on the desired port', function() {
     args.port.should.be.equal('10101');
