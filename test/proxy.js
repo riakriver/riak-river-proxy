@@ -64,5 +64,37 @@ describe('Lookup proxy location', function() {
       request(opts, handler);
     });
   });
-  it('should proxy a good request - pass on request');
+  it('should proxy a good request - pass on request', function(done){
+    var http = require('http');
+    var client = require('redis').createClient();
+    var key = require(__dirname + '/../config').key_prefix + 'test-cluster401';
+
+    function serverHandler(req, res) {
+      res.writeHead(200, {server: 'test-server-handler'});
+      res.end();
+    }
+
+    http.createServer(serverHandler).listen(60000, function() {
+      client.set(key, JSON.stringify({
+        auth:'test-cluster401auth',
+        host: '127.0.0.1',
+        port: 60000
+      }), function() {
+        function handler(e, r, b) {
+          should.strictEqual(e, null);
+          should.strictEqual(r.statusCode, 200);
+          should.strictEqual(r.headers.server, 'test-server-handler');
+          client.del(key, done);
+        }
+        var opts = {
+          url: host + ':' + port,
+          headers: {
+            Authorization: 'test-cluster401auth',
+            "X-Cluster-Id": "test-cluster401"
+          }
+        };
+        request(opts, handler);
+      });
+    });
+  });
 });
