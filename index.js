@@ -30,7 +30,6 @@ function buildProxy() {
   }
 
   var port = process.env.RIAK_RIVER_PROXY_PORT || 8098;
-  console.log(port);
 
   function startServer() {
     var server = http.createServer(handler).listen(port, function(){
