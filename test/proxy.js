@@ -64,7 +64,7 @@ describe('Lookup proxy location', function() {
       request(opts, handler);
     });
   });
-  it('should proxy a good request - pass on request', function(done){
+  it('should proxy a good request - pass on request - return 200', function(done){
     var http = require('http');
     var client = require('redis').createClient();
     var key = require(__dirname + '/../config').key_prefix + 'test-cluster401';
