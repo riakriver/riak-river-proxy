@@ -35,7 +35,7 @@ function startServer() {
       console.log('Riak River Proxy running on', port);
       console.log('Riak River Proxy Redis running on', redis_opts);
     }
-    if (typeof ready === 'function') ready();
+    if (typeof ready === 'function') ready(port, redis_opts);
   });
 }
 
