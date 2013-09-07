@@ -26,4 +26,4 @@ http.createServer(handler).listen(port, function(){
   if (typeof ready === 'function') ready();
 });
 
-module.exports = function(done) { ready = done; }
+module.exports = function(done) { ready = done; };
