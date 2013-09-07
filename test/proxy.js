@@ -31,7 +31,7 @@ describe('Lookup proxy location', function() {
   it('should not proxy a bad request with bad cluster id', function(done) {
     function handler(e, r, b) {
       should.strictEqual(e, null);
-      should.strictEqual(r.statusCode, 400);
+      should.strictEqual(r.statusCode, 404);
       done();
     }
     var opts = {
