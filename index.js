@@ -6,11 +6,7 @@ var ready;
 function buildProxy() {
   var proxy = new httpProxy.RoutingProxy();
   var key_prefix = require('./config').key_prefix;
-
-  var redis_opts = {
-    port: process.env.REDIS_PORT || 6379,
-    host: process.env.REDIS_HOST || '127.0.0.1'
-  };
+  var redis_opts = require('./config').redis_opts;
 
   var client = redis.createClient(redis_opts.port, redis_opts.host);
   client.on('ready', startServer);
