@@ -45,7 +45,7 @@ describe('Lookup proxy location', function() {
   });
   it('should not proxy a good cluster with bad auth key - return 401', function(done){
     var client = require('redis').createClient();
-    var key = require(__dirname + '/../config').key_prefix + 'test-cluster401';
+    var key = require(__dirname + '/../config').cluster_prefix + 'test-cluster401';
     client.set(key, JSON.stringify({
       auth:'test-cluster401auth'
     }), function() {
@@ -67,7 +67,7 @@ describe('Lookup proxy location', function() {
   it('should proxy a good request - pass on request - return 200', function(done){
     var http = require('http');
     var client = require('redis').createClient();
-    var key = require(__dirname + '/../config').key_prefix + 'test-cluster401';
+    var key = require(__dirname + '/../config').cluster_prefix + 'test-cluster401';
 
     function serverHandler(req, res) {
       res.writeHead(200, {server: 'test-server-handler'});
@@ -100,7 +100,7 @@ describe('Lookup proxy location', function() {
 
   it('should handle a non responsive proxy endpoint - 500', function(done) {
     var client = require('redis').createClient();
-    var key = require(__dirname + '/../config').key_prefix + 'test-cluster500';
+    var key = require(__dirname + '/../config').cluster_prefix + 'test-cluster500';
     client.set(key, JSON.stringify({
       auth:'test-cluster500auth',
       host:'127.0.0.1',
