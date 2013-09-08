@@ -27,12 +27,13 @@
   },
   "dependencies": {
     "http-proxy": "~0.10.3",
-    "redis": "~0.8.4"
+    "redis": "~0.8.4",
+    "express": "~3.4.0",
+    "async": "~0.2.9"
   },
   "devDependencies": {
     "mocha": "~1.12.1",
     "should": "~1.2.2",
-    "request": "~2.27.0",
-    "async": "~0.2.9"
+    "request": "~2.27.0"
   }
 }
