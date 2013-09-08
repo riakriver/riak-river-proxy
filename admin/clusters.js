@@ -1,6 +1,8 @@
 var redis = require('redis');
 var async = require('async');
-var redis_opts = require(__dirname + '/../config');
+var redis_opts = require(__dirname + '/../config').redis_opts;
+var cluster_prefix = require(__dirname + '/../config').cluster_prefix;
+var owner_prefix = require(__dirname + '/../config').owner_prefix;
 var idGen = require(__dirname + '/id_generator');
 
 function getRedisClient() {
@@ -28,13 +30,13 @@ var clusters = {
     var id = idGen(req.body.cluster);
     function addCluster(cb) {
       req.body.cluster.id = id;
-      client.set(id, JSON.stringify(req.body.cluster), function(err, status) {
+      client.set(cluster_prefix + id, JSON.stringify(req.body.cluster), function(err, status) {
         cb();
       });
     }
     function addClusterIdToUser(cb) {
       if (req.body.owner) {
-        client.sadd(req.body.owner, id, function(error, index) {
+        client.sadd(owner_prefix + req.body.owner, id, function(error, index) {
           cb(index !== 0 ? null : {message: id + ' already exists in ' + req.body.owner});
         });
       } else {

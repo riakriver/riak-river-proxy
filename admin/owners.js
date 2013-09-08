@@ -1,5 +1,6 @@
 var redis = require('redis');
-var redis_opts = require(__dirname + '/../config');
+var redis_opts = require(__dirname + '/../config').redis_opts;
+var owner_prefix = require(__dirname + '/../config').owner_prefix;
 var async = require('async');
 
 function getRedisClient() {
@@ -10,7 +11,7 @@ var owners = {
   create: function(req, res) {
     var client = getRedisClient();
     function exists(cb) {
-      client.exists(req.body.owner.id, function(err, status) {
+      client.exists(owner_prefix + req.body.owner.id, function(err, status) {
         cb(status === 0 ? null : {
           statusCode: 409,
           message: req.body.owner.id + ' already exists.'
@@ -18,7 +19,7 @@ var owners = {
       });
     }
     function touch(cb) {
-      client.set(req.body.owner.id, JSON.stringify([]), function(err, status) {
+      client.set(owner_prefix + req.body.owner.id, JSON.stringify([]), function(err, status) {
         cb();
       });
     }
@@ -36,7 +37,7 @@ var owners = {
   },
   delete: function(req, res) {
     var client = getRedisClient();
-    client.del(req.params.id, function(err, status) {
+    client.del(owner_prefix + req.params.id, function(err, status) {
       console.log(err, status);
       res.send(200);
     });
