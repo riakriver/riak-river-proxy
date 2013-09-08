@@ -7,8 +7,29 @@ describe('Admin api', function() {
   before(function(done) {
     require(__dirname + '/../../admin')(function(port) {
      url = 'http://' + host + ':' + port;
-     done();
+     request({
+       url:url + '/owners',
+       method: 'POST',
+       json: true,
+       body: {
+         owner: {
+           id: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'
+         }
+       }
+     }, function(e, r, b) {
+       r.statusCode.should.be.equal(200);
+       done();
+     });
     })();
+  });
+  after(function(done) {
+    request({
+      url: url + '/owners/' + encodeURIComponent('$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'),
+      method: 'DELETE'
+    }, function(e, r, b) {
+      r.statusCode.should.equal(200);
+      done();
+    });
   });
   it('should be able to create a cluster', function(done){
     request({

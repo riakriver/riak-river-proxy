@@ -5,6 +5,7 @@ var ready;
 
 function buildServer() {
   var clusters = require(__dirname + '/clusters');
+  var owners = require(__dirname + '/owners');
 
   app.use(express.bodyParser());
 
@@ -13,6 +14,9 @@ function buildServer() {
   app.get('/clusters/:id', clusters.single.list);
   app.delete('/clusters/:id', clusters.single.delete);
   app.put('/clusters/:id', clusters.single.update);
+
+  app.post('/owners', owners.create);
+  app.delete('/owners/:id', owners.delete);
 
   var port = process.env.RIAK_RIVER_PROXY_ADMIN_PORT || 3000;
   http.createServer(app).listen(port, function() {
