@@ -9,7 +9,6 @@ describe('Admin api', function() {
   before(function(done) {
     require(__dirname + '/../../admin')(function(port) {
      url = 'http://' + host + ':' + port;
-     helpers.newCluster.url = url + '/clusters';
      request({
        url:url + '/owners',
        method: 'POST',
@@ -35,7 +34,7 @@ describe('Admin api', function() {
     });
   });
   it('should be able to create a cluster', function(done){
-    request(helpers.newCluster, function(e, r, b) {
+    request(helpers.newCluster(url + '/clusters'), function(e, r, b) {
       should.equal(e, null);
       r.statusCode.should.be.equal(200);
       b.cluster.should.have.property('id');
@@ -48,23 +47,26 @@ describe('Admin api', function() {
     var clusters;
     function check(cb) {
       request({
-        url: url + '/clusters'
+        url: url + '/clusters',
+        json: true
       }, function(e, r, b) {
         should.equal(e, null);
         r.statusCode.should.be.equal(200);
         b.should.have.property('clusters');
-        b.clusters.should.have.property('length', 1000);
+        b.clusters.should.have.property('length', 50);
         clusters = b.clusters;
+        console.log(clusters);
         cb();
       });
     }
     function addTestData(cb) {
       var count = 0;
       async.whilst(
-        function() { return count < 99; },
+        function() { return count < 49; },
         function(callback) {
-          count++;
-          request(helpers.newCluster, callback);
+          var c = helpers.newCluster(url + '/clusters');
+          c.body.cluster.count = count++;
+          request(c, callback);
         },
         cb
       );
