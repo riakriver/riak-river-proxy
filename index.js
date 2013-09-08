@@ -5,14 +5,14 @@ var ready;
 
 function buildProxy() {
   var proxy = new httpProxy.RoutingProxy();
-  var key_prefix = require('./config').key_prefix;
+  var cluster_prefix = require('./config').cluster_prefix;
   var redis_opts = require('./config').redis_opts;
 
   var client = redis.createClient(redis_opts.port, redis_opts.host);
   client.on('ready', startServer);
 
   function checkForCluster(cluster_id, callback) {
-    client.get(key_prefix + cluster_id, function(err, reply) {
+    client.get(cluster_prefix + cluster_id, function(err, reply) {
       if (reply === null) {
         return callback(new Error("Cluster " + cluster_id + " not found"));
       } else {
