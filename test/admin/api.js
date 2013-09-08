@@ -1,5 +1,7 @@
 var request = require('request');
 var should = require('should');
+var async = require('async');
+var helpers = require(__dirname + '/helpers');
 
 describe('Admin api', function() {
   var host = '127.0.0.1';
@@ -7,6 +9,7 @@ describe('Admin api', function() {
   before(function(done) {
     require(__dirname + '/../../admin')(function(port) {
      url = 'http://' + host + ':' + port;
+     helpers.newCluster.url = url + '/clusters';
      request({
        url:url + '/owners',
        method: 'POST',
@@ -32,26 +35,7 @@ describe('Admin api', function() {
     });
   });
   it('should be able to create a cluster', function(done){
-    request({
-      url: url + '/clusters',
-      method: 'POST',
-      json: true,
-      body: {
-        owner: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$',
-        cluster: {
-          nodes: [{
-            host: 'riak.wlaurance.com',
-            port: 8098
-          }, {
-            host: 'basho.wlaurance.com',
-            port: 8098
-          }, {
-            host: 'krumm.wlaurance.com',
-            port: 8098
-          }]
-        }
-      }
-    }, function(e, r, b) {
+    request(helpers.newCluster, function(e, r, b) {
       should.equal(e, null);
       r.statusCode.should.be.equal(200);
       b.cluster.should.have.property('id');
@@ -60,7 +44,41 @@ describe('Admin api', function() {
       done();
     });
   });
-  it('should be able to list clusters');
+  it('should be able to list clusters', function(done){
+    var clusters;
+    function check(cb) {
+      request({
+        url: url + '/clusters'
+      }, function(e, r, b) {
+        should.equal(e, null);
+        r.statusCode.should.be.equal(200);
+        b.should.have.property('clusters');
+        b.clusters.should.have.property('length', 1000);
+        clusters = b.clusters;
+        cb();
+      });
+    }
+    function addTestData(cb) {
+      var count = 0;
+      async.whilst(
+        function() { return count < 99; },
+        function(callback) {
+          count++;
+          request(helpers.newCluster, callback);
+        },
+        cb
+      );
+    }
+    function rmTestData(cb) {
+      async.each(clusters, function(cluster, cb) {
+        request({
+          url: url + '/clusters/' + encodeURIComponent(cluster.id),
+          method: 'DELETE'
+        }, cb);
+      }, cb);
+    }
+    async.series([addTestData, check, rmTestData], done);
+  });
   it('should be able to list a cluster');
   it('should be able to delete a cluster');
   describe('editing a particular cluster', function() {
