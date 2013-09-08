@@ -27,24 +27,22 @@ var clusters = {
     var client = getRedisClient();
     var id = idGen(req.body.cluster);
     function addCluster(cb) {
-      
+      req.body.cluster.id = id;
+      client.set(id, JSON.stringify(req.body.cluster), function(err, status) {
+        cb();
+      });
     }
     function addClusterIdToUser(cb) {
       if (req.body.owner) {
-        console.log(req.body.owner);
-        client.lpushx(req.body.owner, id, function(error, index) {
-          cb(index !== 0 ? null : new Error(req.body.owner + ' not found'));
+        client.sadd(req.body.owner, id, function(error, index) {
+          cb(index !== 0 ? null : {message: id + ' already exists in ' + req.body.owner});
         });
       } else {
         cb(new Error('No owner id provided'));
       }
     }
     async.series([addClusterIdToUser, addCluster], function(error) {
-      if (error) {
-
-      } else {
-
-      }
+      res.send(error ? 404:200, error || req.body);
     });
   },
   single: cluster

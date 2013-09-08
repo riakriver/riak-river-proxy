@@ -55,7 +55,8 @@ describe('Admin api', function() {
       should.equal(e, null);
       r.statusCode.should.be.equal(200);
       b.cluster.should.have.property('id');
-      b.cluster.should.have.property('owner', '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$');
+      b.cluster.nodes.should.have.property('length', 3);
+      b.should.have.property('owner', '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$');
       done();
     });
   });
