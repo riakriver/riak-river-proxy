@@ -14,7 +14,10 @@ var cluster = {
 
   },
   delete: function(req, res) {
-
+    var client = getRedisClient();
+    client.del(cluster_prefix + req.params.id, function(err, status) {
+      res.send(status ? 200 : 404);
+    });
   },
   update: function(req, res) {
 
@@ -23,7 +26,19 @@ var cluster = {
 
 var clusters = {
   list: function(req, res) {
-
+    var client = getRedisClient();
+    var results = [];
+    function transform(key, callback) {
+      client.get(key, function(err, reply) {
+        results.push(JSON.parse(reply));
+        callback();
+      });
+    }
+    client.keys(cluster_prefix + '*', function(err, reply) {
+      async.each(reply, transform, function(err) {
+        res.send({clusters: results});
+      });
+    });
   },
   create: function(req, res) {
     var client = getRedisClient();
