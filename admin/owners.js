@@ -38,8 +38,7 @@ var owners = {
   delete: function(req, res) {
     var client = getRedisClient();
     client.del(owner_prefix + req.params.id, function(err, status) {
-      console.log(err, status);
-      res.send(200);
+      res.send(status ? 200 : 404);
     });
   }
 };
