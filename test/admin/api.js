@@ -55,7 +55,6 @@ describe('Admin api', function() {
         b.should.have.property('clusters');
         b.clusters.should.have.property('length', 50);
         clusters = b.clusters;
-        console.log(clusters);
         cb();
       });
     }

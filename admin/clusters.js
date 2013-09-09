@@ -14,7 +14,10 @@ var cluster = {
 
   },
   delete: function(req, res) {
-
+    var client = getRedisClient();
+    client.del(cluster_prefix + req.params.id, function(err, status) {
+      res.send(status ? 200 : 404);
+    });
   },
   update: function(req, res) {
 
