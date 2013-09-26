@@ -6,6 +6,9 @@ var helpers = require(__dirname + '/helpers');
 describe('Admin api', function() {
   var host = '127.0.0.1';
   var url;
+  var owner = {
+    id: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'
+  };
   before(function(done) {
     require(__dirname + '/../../admin')(function(port) {
      url = 'http://' + host + ':' + port;
@@ -14,9 +17,7 @@ describe('Admin api', function() {
        method: 'POST',
        json: true,
        body: {
-         owner: {
-           id: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'
-         }
+         owner: owner
        }
      }, function(e, r, b) {
        r.statusCode.should.be.equal(200);
@@ -26,7 +27,7 @@ describe('Admin api', function() {
   });
   after(function(done) {
     request({
-      url: url + '/owners/' + encodeURIComponent('$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'),
+      url: url + '/owners/' + encodeURIComponent(owner.id),
       method: 'DELETE'
     }, function(e, r, b) {
       r.statusCode.should.equal(200);
@@ -39,7 +40,7 @@ describe('Admin api', function() {
       r.statusCode.should.be.equal(200);
       b.cluster.should.have.property('id');
       b.cluster.nodes.should.have.property('length', 3);
-      b.should.have.property('owner', '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$');
+      b.should.have.property('owner', owner.id);
       done();
     });
   });
