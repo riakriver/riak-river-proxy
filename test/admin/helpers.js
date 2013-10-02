@@ -1,3 +1,5 @@
+var should = require('should');
+
 module.exports = {
   newCluster: function(url){
     return new Object({
@@ -5,8 +7,8 @@ module.exports = {
       method: 'POST',
       json: true,
       body: {
-        owner: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$',
         cluster: {
+          owner: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$',
           nodes: [{
             host: 'riak.wlaurance.com',
             port: 8098
@@ -20,5 +22,11 @@ module.exports = {
         }
       }
     });
+  },
+  checkCluster: function(res){
+    var cluster = res.cluster;
+    cluster.should.have.property('id');
+    cluster.should.have.property('nodes');
+    cluster.should.have.property('owner');
   }
 };

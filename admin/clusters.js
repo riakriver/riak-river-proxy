@@ -45,14 +45,14 @@ var clusters = {
     var id = idGen(req.body.cluster);
     function addCluster(cb) {
       req.body.cluster.id = id;
-      client.set(cluster_prefix + id, JSON.stringify(req.body.cluster), function(err, status) {
+      client.set(cluster_prefix + id, JSON.stringify(req.body), function(err, status) {
         cb();
       });
     }
     function addClusterIdToUser(cb) {
-      if (req.body.owner) {
-        client.sadd(owner_prefix + req.body.owner, id, function(error, index) {
-          cb(index !== 0 ? null : {message: id + ' already exists in ' + req.body.owner});
+      if (req.body.cluster.owner) {
+        client.sadd(owner_prefix + req.body.cluster.owner, id, function(error, index) {
+          cb(index !== 0 ? null : {message: id + ' already exists in ' + req.body.cluster.owner});
         });
       } else {
         cb(new Error('No owner id provided'));

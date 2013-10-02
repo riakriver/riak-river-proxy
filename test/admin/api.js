@@ -1,6 +1,7 @@
 var request = require('request');
 var should = require('should');
 var async = require('async');
+var _ = require('underscore');
 var helpers = require(__dirname + '/helpers');
 
 describe('Admin api', function() {
@@ -38,9 +39,8 @@ describe('Admin api', function() {
     request(helpers.newCluster(url + '/clusters'), function(e, r, b) {
       should.equal(e, null);
       r.statusCode.should.be.equal(200);
-      b.cluster.should.have.property('id');
+      helpers.checkCluster(b);
       b.cluster.nodes.should.have.property('length', 3);
-      b.should.have.property('owner', owner.id);
       done();
     });
   });
@@ -54,8 +54,9 @@ describe('Admin api', function() {
         should.equal(e, null);
         r.statusCode.should.be.equal(200);
         b.should.have.property('clusters');
-        b.clusters.should.have.property('length', 50);
+        b.clusters.length.should.be.above(49);
         clusters = b.clusters;
+        _.each(clusters, helpers.checkCluster);
         cb();
       });
     }
@@ -81,7 +82,14 @@ describe('Admin api', function() {
     }
     async.series([addTestData, check, rmTestData], done);
   });
-  it('should be able to list a cluster');
+  it('should be able to list a cluster', function(done){
+    var cluster = helpers.newCluster(url + '/clusters');
+    cluster.body.cluster.count = 1000;
+    request(cluster, function(e,r,b){
+      helpers.checkCluster(b);
+      done();
+    });
+  });
   it('should be able to delete a cluster');
   describe('editing a particular cluster', function() {
     it('should be able to update the auth key');
