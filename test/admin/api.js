@@ -88,7 +88,14 @@ describe('Admin api', function() {
     cluster.body.cluster.count = 1000;
     request(cluster, function(e,r,b){
       helpers.checkCluster(b);
-      done();
+      request({
+        url: url + '/clusters/' + encodeURIComponent(b.cluster.id),
+        json:true
+      }, function(e,r,b){
+        r.statusCode.should.be.equal(200);
+        helpers.checkCluster(b);
+        done();
+      });
     });
   });
   it('should be able to delete a cluster', function(done){
