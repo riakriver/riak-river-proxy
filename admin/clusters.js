@@ -11,7 +11,10 @@ function getRedisClient() {
 
 var cluster = {
   list: function(req, res) {
-
+    var client = getRedisClient();
+    client.get(cluster_prefix + req.params.id, function(err, reply){
+      res.send(reply ? 200 : 404, JSON.parse(reply));
+    });
   },
   delete: function(req, res) {
     var client = getRedisClient();

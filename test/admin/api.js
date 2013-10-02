@@ -112,7 +112,7 @@ describe('Admin api', function() {
           url: url + '/clusters/' + encodeURIComponent(oneCluster.id),
           json:true
         }, function(e,r,b){
-          r.statusCode.should.be(404);
+          r.statusCode.should.be.equal(404);
           done();
         });
       });
