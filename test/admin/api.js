@@ -73,7 +73,8 @@ describe('Admin api', function() {
       );
     }
     function rmTestData(cb) {
-      async.each(clusters, function(cluster, cb) {
+      async.each(clusters, function(entry, cb) {
+        var cluster = entry.cluster;
         request({
           url: url + '/clusters/' + encodeURIComponent(cluster.id),
           method: 'DELETE'
@@ -90,7 +91,26 @@ describe('Admin api', function() {
       done();
     });
   });
-  it('should be able to delete a cluster');
+  it('should be able to delete a cluster', function(done){
+    var cluster = helpers.newCluster(url + '/clusters');
+    cluster.body.cluster.count = 2000;
+    request(cluster, function(e,r,b){
+      var oneCluster = b.cluster;
+      request({
+        url: url + '/clusters/' + encodeURIComponent(oneCluster.id),
+        method: 'DELETE'
+      }, function(e,r,b){
+        r.statusCode.should.be.equal(200);
+        request({
+          url: url + '/clusters/' + encodeURIComponent(oneCluster.id),
+          json:true
+        }, function(e,r,b){
+          r.statusCode.should.be(404);
+          done();
+        });
+      });
+    });
+  });
   describe('editing a particular cluster', function() {
     it('should be able to update the auth key');
     describe('editing ssl https properties', function() {
