@@ -32,7 +32,8 @@
     "http-proxy": "~0.10.3",
     "redis": "~0.8.4",
     "express": "~3.4.0",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "uuid": "~1.4.1"
   },
   "devDependencies": {
     "mocha": "~1.12.1",

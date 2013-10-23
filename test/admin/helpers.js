@@ -28,5 +28,6 @@ module.exports = {
     cluster.should.have.property('id');
     cluster.should.have.property('nodes');
     cluster.should.have.property('owner');
+    cluster.should.have.property('authToken');
   }
 };
