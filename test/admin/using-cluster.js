@@ -16,7 +16,7 @@ function usingCluster() {
         portfinder.getPort(function(err, port) {
           fakeServer = {
             handle: http.createServer(function(req, res){
-              res.writeHead(200, {server: 'test-server-handler-' + port});
+              res.writeHead(417, {server: 'test-server-handler-' + port});
               res.end();
             }),
             port: port
@@ -65,7 +65,21 @@ function usingCluster() {
         done();
       });
     });
-    it('should be proxyable');
+    it('should be proxyable', function(done){
+      var proxy_port = process.env.RIAK_RIVER_PROXY_PORT;
+      console.log(cluster);
+      request({
+        url: 'http://127.0.0.1:' + proxy_port,
+        headers: {
+          Authorization: cluster.auth_token,
+          "X-Cluster-Id": cluster.id
+        }
+      }, function(e,r,b){
+        r.statusCode.should.be.equal(417);
+        r.headers.server.should.be.equal('test-server-handler-' + fakeServer.port);
+        done();
+      });
+    });
   });
   describe('deleting a cluster through the admin api', function() {
     it('should return a 5xx error if the host is down');
