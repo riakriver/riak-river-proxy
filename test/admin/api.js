@@ -6,25 +6,27 @@ var helpers = require(__dirname + '/helpers');
 
 describe('Admin api', function() {
   var host = '127.0.0.1';
+  var port;
   var url;
   var owner = {
     id: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'
   };
   before(function(done) {
-    require(__dirname + '/../../admin')(function(port) {
-     url = 'http://' + host + ':' + port;
-     request({
-       url:url + '/owners',
-       method: 'POST',
-       json: true,
-       body: {
-         owner: owner
-       }
-     }, function(e, r, b) {
-       r.statusCode.should.be.equal(200);
-       done();
-     });
-    })();
+    require(__dirname + '/../../admin')(function(p) {
+      port = p;
+      url = 'http://' + host + ':' + port;
+      request({
+        url:url + '/owners',
+        method: 'POST',
+        json: true,
+        body: {
+          owner: owner
+        }
+      }, function(e, r, b) {
+        r.statusCode.should.be.equal(200);
+        done();
+      });
+      })();
   });
   after(function(done) {
     request({
@@ -118,24 +120,14 @@ describe('Admin api', function() {
       });
     });
   });
-  describe('editing a particular cluster', function() {
-    it('should be able to update the auth key');
-    describe('editing ssl https properties', function() {
-      it('should be able to toggle the https flag');
-      it('should be able to change key');
-      it('should be able to change cert');
-    });
-    describe('editing nodes in a cluster', function() {
-      it('should be able to add a node in the cluster');
-      it('should be able to delete a node in the cluster');
-      describe('editing node', function() {
-        it('should be able to update the host');
-        it('should be able to update the port');
-      });
-    });
-    describe('load balancing', function() {
-      it('should be able to change the load balancing algorithm');
-      it('should test the load balancing algorithms');
-    });
+  describe(
+    'editing a particular cluster',
+    require(__dirname + '/editing-cluster')
+  );
+  it('', function(){
+    describe(
+      'using a cluster after CRUDing through Admin API',
+      require(__dirname + '/using-cluster')(port)
+    );
   });
 });

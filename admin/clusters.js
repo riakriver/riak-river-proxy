@@ -4,6 +4,7 @@ var redis_opts = require(__dirname + '/../config').redis_opts;
 var cluster_prefix = require(__dirname + '/../config').cluster_prefix;
 var owner_prefix = require(__dirname + '/../config').owner_prefix;
 var idGen = require(__dirname + '/id_generator');
+var authGen = require(__dirname + '/auth_generator');
 
 function getRedisClient() {
   return redis.createClient(redis_opts.port, redis_opts.host);
@@ -46,8 +47,10 @@ var clusters = {
   create: function(req, res) {
     var client = getRedisClient();
     var id = idGen(req.body.cluster);
+    var authToken = authGen(id);
     function addCluster(cb) {
       req.body.cluster.id = id;
+      req.body.cluster.authToken = authToken;
       client.set(cluster_prefix + id, JSON.stringify(req.body), function(err, status) {
         cb();
       });
