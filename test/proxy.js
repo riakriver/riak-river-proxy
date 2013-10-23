@@ -47,7 +47,9 @@ describe('Lookup proxy location', function() {
     var client = require('redis').createClient();
     var key = require(__dirname + '/../config').cluster_prefix + 'test-cluster401';
     client.set(key, JSON.stringify({
-      auth:'test-cluster401auth'
+      cluster: {
+        authToken:'test-cluster401auth'
+      }
     }), function() {
       function handler(e, r, b) {
         should.strictEqual(e, null);
@@ -76,9 +78,13 @@ describe('Lookup proxy location', function() {
 
     http.createServer(serverHandler).listen(60000, function() {
       client.set(key, JSON.stringify({
-        auth:'test-cluster401auth',
-        host: '127.0.0.1',
-        port: 60000
+        cluster: {
+          authToken:'test-cluster401auth',
+          nodes: [{
+            host: '127.0.0.1',
+            port: 60000
+          }]
+        }
       }), function() {
         function handler(e, r, b) {
           should.strictEqual(e, null);
@@ -102,9 +108,13 @@ describe('Lookup proxy location', function() {
     var client = require('redis').createClient();
     var key = require(__dirname + '/../config').cluster_prefix + 'test-cluster500';
     client.set(key, JSON.stringify({
-      auth:'test-cluster500auth',
-      host:'127.0.0.1',
-      port: 90000
+      cluster: {
+        authToken:'test-cluster500auth',
+        nodes:[{
+          host:'127.0.0.1',
+          port: 90000
+        }]
+      }
     }), function() {
       function handler(e, r, b) {
         should.strictEqual(e, null);
