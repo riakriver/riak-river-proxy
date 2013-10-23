@@ -82,7 +82,22 @@ function usingCluster() {
     });
   });
   describe('deleting a cluster through the admin api', function() {
-    it('should return a 5xx error if the host is down');
+    before(function(done){
+      fakeServer.handle.close(done);
+    });
+
+    it('should return a 5xx error if the host is down', function(done){
+      request({
+        url: 'http://127.0.0.1:' + process.env.RIAK_RIVER_PROXY_PORT,
+        headers: {
+          Authorization: cluster.authToken,
+          "X-Cluster-Id": cluster.id
+        }
+      }, function(e,r,b){
+        r.statusCode.should.be.equal(500);
+        done();
+      });
+    });
     it('should not be proxyable if removed through admin api');
   });
 }
