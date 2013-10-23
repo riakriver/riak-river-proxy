@@ -67,11 +67,11 @@ function usingCluster() {
     });
     it('should be proxyable', function(done){
       var proxy_port = process.env.RIAK_RIVER_PROXY_PORT;
-      console.log(cluster);
+      cluster.should.have.property('authToken');
       request({
         url: 'http://127.0.0.1:' + proxy_port,
         headers: {
-          Authorization: cluster.auth_token,
+          Authorization: cluster.authToken,
           "X-Cluster-Id": cluster.id
         }
       }, function(e,r,b){
@@ -82,8 +82,40 @@ function usingCluster() {
     });
   });
   describe('deleting a cluster through the admin api', function() {
-    it('should return a 5xx error if the host is down');
-    it('should not be proxyable if removed through admin api');
+    it('should return a 5xx error if the host is down', function(done){
+      fakeServer.handle.close(function(){
+        request({
+          url: 'http://127.0.0.1:' + process.env.RIAK_RIVER_PROXY_PORT,
+          headers: {
+            Authorization: cluster.authToken,
+            "X-Cluster-Id": cluster.id
+          }
+        }, function(e,r,b){
+          r.statusCode.should.be.equal(500);
+          done();
+        });
+      });
+    });
+    it('should not be proxyable if removed through admin api', function(done){
+      fakeServer.handle.listen(fakeServer.port, function() {
+        request.del({
+          url: adminURI + '/clusters/' + encodeURIComponent(cluster.id),
+          json: true
+        }, function(e,r,b){
+          r.statusCode.should.be.equal(200);
+          request({
+            url: 'http://127.0.0.1:' + process.env.RIAK_RIVER_PROXY_PORT,
+            headers: {
+              Authorization: cluster.authToken,
+              "X-Cluster-Id": cluster.id
+            }
+          }, function(e,r,b){
+            r.statusCode.should.be.equal(404);
+            done();
+          });
+        });
+      });
+    });
   });
 }
 

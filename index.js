@@ -16,22 +16,26 @@ function buildProxy() {
       if (reply === null) {
         return callback(new Error("Cluster " + cluster_id + " not found"));
       } else {
-        return callback(null, JSON.parse(reply));
+        return callback(null, JSON.parse(reply).cluster);
       }
     });
+  }
+
+  function passOnToCluster(req, res, cluster) {
+    return proxy.proxyRequest(req, res, cluster.nodes[0]);
   }
 
   function handler(req, res){
     var auth = req.headers.authorization;
     var cluster_id = req.headers['x-cluster-id'];
     if (auth && cluster_id){
-      checkForCluster(cluster_id, function(err, options) {
+      checkForCluster(cluster_id, function(err, cluster) {
         if (err) {
           res.writeHead(404);
           return res.end();
         } else {
-          if (auth === options.auth) {
-            return proxy.proxyRequest(req, res, options);
+          if (auth === cluster.authToken) {
+            return passOnToCluster(req, res, cluster);
           } else {
             res.writeHead(401);
             return res.end();
@@ -48,7 +52,8 @@ function buildProxy() {
 
   function startServer() {
     var server = http.createServer(handler).listen(port, function(){
-      if (process.env.NODE_ENV !== 'PRODUCTION') {
+      if (process.env.NODE_ENV !== 'PRODUCTION' &&
+         process.env.NODE_ENV !== 'TESTING') {
         console.log('Riak River Proxy running on', port);
         console.log('Riak River Proxy Redis running on', redis_opts);
       }
