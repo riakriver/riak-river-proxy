@@ -67,11 +67,11 @@ function usingCluster() {
     });
     it('should be proxyable', function(done){
       var proxy_port = process.env.RIAK_RIVER_PROXY_PORT;
-      console.log(cluster);
+      cluster.should.have.property('authToken');
       request({
         url: 'http://127.0.0.1:' + proxy_port,
         headers: {
-          Authorization: cluster.auth_token,
+          Authorization: cluster.authToken,
           "X-Cluster-Id": cluster.id
         }
       }, function(e,r,b){
