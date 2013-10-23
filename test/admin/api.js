@@ -118,5 +118,12 @@ describe('Admin api', function() {
       });
     });
   });
-  describe('editing a particular cluster', require(__dirname + '/editing-cluster'));
+  describe(
+    'editing a particular cluster',
+    require(__dirname + '/editing-cluster')
+  );
+  describe(
+    'using a cluster after CRUDing through Admin API',
+    require(__dirname + '/using-cluster')
+  );
 });
