@@ -2,11 +2,13 @@ var request = require('request');
 var userid = 'blahblahtestuser123456789';
 var portfinder = require('portfinder');
 var async = require('async');
+var should = require('should');
 var adminPort;
 
 function usingCluster() {
   var fakeServer;
   var cluster;
+  var adminURI = 'http://127.0.0.1:' + adminPort;
   describe('adding a cluster through the admin api', function() {
     before(function(done) {
       function startFakeServer(cb) {
@@ -25,7 +27,7 @@ function usingCluster() {
 
       function addTestCluster(cb) {
         request.post({
-          url: 'http://127.0.0.1:' + adminPort + '/owners',
+          url: adminURI + '/owners',
           json: true,
           body: {
             owner: {
@@ -34,7 +36,7 @@ function usingCluster() {
           }
         }, function(e,r,b) {
           request.post({
-            url: 'http://127.0.0.1:' + adminPort + '/clusters',
+            url: adminURI + '/clusters',
             json: true,
             body: {
               cluster: {
@@ -53,7 +55,16 @@ function usingCluster() {
       }
       async.parallel([startFakeServer, addTestCluster], done);
     });
-    it('should show up in the cluster list');
+    it('should show up in the cluster list', function(done){
+      request({
+        url: adminURI + '/clusters/' + encodeURIComponent(cluster.id),
+        json: true
+      }, function(e,r,b) {
+        r.statusCode.should.be.equal(200);
+        JSON.stringify(b.cluster).should.be.equal(JSON.stringify(cluster));
+        done();
+      });
+    });
     it('should return a 5xx error if the host is down');
     it('should be proxyable');
   });
