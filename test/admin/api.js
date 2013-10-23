@@ -6,25 +6,27 @@ var helpers = require(__dirname + '/helpers');
 
 describe('Admin api', function() {
   var host = '127.0.0.1';
+  var port;
   var url;
   var owner = {
     id: '$4$k+GSA2XV$i6gMmHu2t6qvoVNa/HUDWhQ38sE$'
   };
   before(function(done) {
-    require(__dirname + '/../../admin')(function(port) {
-     url = 'http://' + host + ':' + port;
-     request({
-       url:url + '/owners',
-       method: 'POST',
-       json: true,
-       body: {
-         owner: owner
-       }
-     }, function(e, r, b) {
-       r.statusCode.should.be.equal(200);
-       done();
-     });
-    })();
+    require(__dirname + '/../../admin')(function(p) {
+      port = p;
+      url = 'http://' + host + ':' + port;
+      request({
+        url:url + '/owners',
+        method: 'POST',
+        json: true,
+        body: {
+          owner: owner
+        }
+      }, function(e, r, b) {
+        r.statusCode.should.be.equal(200);
+        done();
+      });
+      })();
   });
   after(function(done) {
     request({
@@ -122,8 +124,10 @@ describe('Admin api', function() {
     'editing a particular cluster',
     require(__dirname + '/editing-cluster')
   );
-  describe(
-    'using a cluster after CRUDing through Admin API',
-    require(__dirname + '/using-cluster')
-  );
+  it('', function(){
+    describe(
+      'using a cluster after CRUDing through Admin API',
+      require(__dirname + '/using-cluster')(port)
+    );
+  });
 });
