@@ -52,7 +52,8 @@ function buildProxy() {
 
   function startServer() {
     var server = http.createServer(handler).listen(port, function(){
-      if (process.env.NODE_ENV !== 'PRODUCTION') {
+      if (process.env.NODE_ENV !== 'PRODUCTION' &&
+         process.env.NODE_ENV !== 'TESTING') {
         console.log('Riak River Proxy running on', port);
         console.log('Riak River Proxy Redis running on', redis_opts);
       }

@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "./node_modules/.bin/mocha -R spec --recursive",
+    "test": "NODE_ENV=TESTING ./node_modules/.bin/mocha -R spec --recursive",
     "start-all": "node ./start.js all",
     "start-admin": "node ./start.js admin",
     "start-proxy": "node ./start.js proxy"

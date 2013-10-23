@@ -20,7 +20,8 @@ function buildServer() {
 
   var port = process.env.RIAK_RIVER_PROXY_ADMIN_PORT || 3000;
   http.createServer(app).listen(port, function() {
-    if (process.env.NODE_ENV !== 'PRODUCTION') {
+    if (process.env.NODE_ENV !== 'PRODUCTION' &&
+       process.env.NODE_ENV !== 'TESTING') {
       console.log('Riak River Admin Proxy API running on', port);
     }
     if (typeof ready === 'function') ready(port);
