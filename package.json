@@ -1,6 +1,6 @@
 {
   "name": "riak-river-proxy",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Proxy point for clients. Handles authentication and load balancing to client riak clusters.",
   "main": "index.js",
   "private": true,
