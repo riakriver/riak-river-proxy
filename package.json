@@ -31,7 +31,7 @@
   "dependencies": {
     "http-proxy": "~0.10.3",
     "redis": "~0.9.0",
-    "express": "~3.4.3",
+    "express": "~3.4.4",
     "async": "~0.2.9",
     "uuid": "~1.4.1"
   },
